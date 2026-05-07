@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Katalog Pokemon TCG</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; background-color: #f4f4f9; }
+        .container { background: white; padding: 20px 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+        h1 { color: #e3350d; }
+        input[type="text"] { width: 70%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 8px 15px; background-color: #3b4cca; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #2a3a9a; }
+        ul { list-style-type: square; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="judul-katalog">Memuat...</h1>
+        <p><strong>Pemilik:</strong> <span id="pemilik"></span></p>
+        <p><strong>NIM:</strong> <span id="nim"></span></p>
+        <hr>
+        <h3>Koleksi Kartu Saat Ini:</h3>
+        <ul id="katalog-list"></ul>
+        <hr>
+        <h3>Tambah Kartu Baru:</h3>
+        <input type="text" id="item-input" placeholder="Nama kartu (contoh: Gengar VMAX)...">
+        <button onclick="tambahItem()">Simpan</button>
+    </div>
+
+    <script>
+        // PENTING: Ubah URL ini ke FQDN Backend Azure milikmu nanti sebelum build Frontend!
+        // Sesuaikan dengan link yang baru saja kamu buka di browser tadi
+        const API_URL = '/api';
+
+        function loadData() {
+            fetch(`${API_URL}/info`)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('judul-katalog').innerText = data.judul_katalog;
+                    document.getElementById('pemilik').innerText = data.pemilik;
+                    document.getElementById('nim').innerText = data.nim;
+
+                    const list = document.getElementById('katalog-list');
+                    list.innerHTML = "";
+                    data.items.forEach(item => {
+                        let li = document.createElement('li');
+                        li.innerText = item;
+                        list.appendChild(li);
+                    });
+                })
+                .catch(err => console.error("Gagal mengambil data:", err));
+        }
+
+        function tambahItem() {
+            const input = document.getElementById('item-input');
+            if(!input.value) return;
+
+            fetch(`${API_URL}/add-item`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ item: input.value })
+            })
+            .then(res => res.json())
+            .then(() => {
+                input.value = "";
+                loadData();
+            })
+            .catch(err => console.error("Gagal menambah data:", err));
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
