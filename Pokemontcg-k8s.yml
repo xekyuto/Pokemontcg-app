@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: USERNAME_DOCKERHUB_ANDA/pokemontcg-backend:latest
+        image: xekyuto/pokemontcg-backend:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
@@ -53,7 +53,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: USERNAME_DOCKERHUB_ANDA/pokemontcg-frontend:latest
+        image: xekyuto/pokemontcg-frontend:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
